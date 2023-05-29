@@ -1,18 +1,60 @@
+'use client'
+
 import Image from "next/image";
 import data from "../api/data.json";
+import { Bar } from "react-chartjs-2";
+import { CategoryScale } from "chart.js";
+import Chart from 'chart.js/auto';
+
+Chart.register(CategoryScale);
+
+export const options = {
+  responsive: true,
+};
 
 export default function Budget() {
-  interface ExpenseType {
-    day: string;
-    amount: number;
-  }
   const balanceThisMonth = 0;
-  const totalThisMonth = 0;
   const percentDifference = 0;
+  let sum = 0;
+  let callBackIncrement = 0;
 
-  data.forEach(function (combine) {
-    console.log(data[0].amount);
+  data.forEach(function() {
+    sum += data[callBackIncrement].amount;
+    callBackIncrement++;
   });
+
+  const dayLabel:string[] = data.map((list) => list.day);
+  const amountPerDay:number[] = data.map((list) => list.amount);
+
+  const barData = {
+    labels: dayLabel,
+    legend: {
+      display: false
+    },
+    datasets: [{
+      data: amountPerDay,
+      backgroundColor: [
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 99, 132, 1)',
+      ],
+      borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 99, 132)',
+        'rgb(255, 99, 132)',
+        'rgb(255, 99, 132)',
+        'rgb(255, 99, 132)',
+      ],
+      borderWidth: 1
+    }]
+  };
+  
 
   return (
     <div className="flex flex-col">
@@ -25,13 +67,13 @@ export default function Budget() {
       </div>
       <div className="bg-cream p-4 rounded-xl">
         <h3 className="text-5xl text-dark-brown">Spending - Last 7 days</h3>
-        <div className="w-full h-32">
-          <p className="text-5xl text-center">IMAGE</p>
+        <div className="w-full">
+        <Bar options={options} data={barData} />
         </div>
         <div className="border-t-2 border-medium-brown flex justify-between pt-4">
           <div className="flex flex-col justify-center">
             <p className="text-medium-brown text-xl">Total this month</p>
-            <h4 className="text-5xl text-dark-brown">{totalThisMonth}</h4>
+            <h4 className="text-5xl text-dark-brown">${sum}</h4>
           </div>
           <div className="flex flex-col content-end justify-center">
             <h5 className="text-2xl text-dark-brown">{percentDifference}</h5>
